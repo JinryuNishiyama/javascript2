@@ -63,7 +63,7 @@ $(document).ready(function(){
   $(".key-00").click(function(){
     $("button").css("border", "2px solid black");
     $(".key-00").css("border", "2px solid blue");
-    pressNumberKey("00");
+    press00Key();
   });
   
   $(".key-plus-sign").click(function(){
@@ -116,7 +116,7 @@ let completedCalculation = 0;
 
 function pressNumberKey(input){
   if(operator === null){
-    if(result === "0"){
+    if(value1 === "0"){
       value1 = input;
       result = value1;
       $(".result").text(result);
@@ -126,7 +126,7 @@ function pressNumberKey(input){
       $(".result").text(result);
     }
   } else {
-    if(value2 === null){
+    if(value2 === null || value2 === "0"){
       value2 = input;
       result = value1 + operator + value2;
       $(".result").text(result);
@@ -140,8 +140,27 @@ function pressNumberKey(input){
   completedCalculation = 0;
 }
 
+/* 数値が00から始まらないようにする */
+function press00Key(){
+  if(operator === null){
+    if(value1 !== "0"){
+      pressNumberKey("00");
+    }
+  } else {
+    if(value2 !== null && value2 !== "0"){
+      pressNumberKey("00");
+    }
+  }
+}
+
 function pressSymbolKey(input){
   if(operator === null){
+    operator = input;
+    result = value1 + operator;
+    $(".result").text(result);
+  } 
+  /* 演算子入力後に別の演算子を入力すると、後者に上書きされるようにする */
+  else if(value2 === null){
     operator = input;
     result = value1 + operator;
     $(".result").text(result);
@@ -159,7 +178,7 @@ function pressDecimalPoint(){
     
     value1DecimalPoint++;
     
-  } else if(operator !== null && value2 !== null && value2DecimalPoint === 0){
+  } else if(value2 !== null && value2DecimalPoint === 0){
     value2 = value2 + ".";
     result = value1 + operator + value2;
     
